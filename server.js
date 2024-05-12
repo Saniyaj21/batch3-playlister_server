@@ -1,16 +1,32 @@
 import express from 'express';
-import { home } from './controllers/userController.js';
 import 'dotenv/config'
+import { connectDB } from './db/connect.js';
 
 const server = express();
 connectDB()
 
-// get, post, put, delete , patch
 import userRouter from './routes/userRouter.js'
-import { connectDB } from './db/connect.js';
 
-server.get('/', home);
-server.use('/user', userRouter);
+// middleware
+server.use(express.json());
+
+
+
+
+server.use('/api/user', userRouter);
+
+
+
+
+
+
+server.get('/', (req, res) => {
+    res.send('Server is healthy');
+});
+
+
+
+
 
 server.listen(8080, () => {
     console.log('Server listening on port 8080');

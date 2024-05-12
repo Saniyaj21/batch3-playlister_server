@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     profilePic: {
         type: String,
@@ -18,6 +19,7 @@ const userSchema = new mongoose.Schema({
             ref: 'Playlist'
         }
     ],
+    token: String
 },
     { timestamps: true }
 )
