@@ -20,7 +20,10 @@ export const getUserProfile = async (req, res) => {
 export const googleSignup = async (req, res) => {
 
     try {
+
+
         const { name, email, profilePic } = req.body
+        console.log(name, email, profilePic);
 
         // finding user
         let user = await User.findOne({ email })
