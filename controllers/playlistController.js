@@ -34,7 +34,7 @@ export const createPlaylist = async (req, res) => {
 export const getAllPlaylists = async (req, res) => {
 
     try {
-        const playlists = await Playlist.find()
+        const playlists = await Playlist.find().populate('videos')
         res.status(201).json({
             message: 'User register',
             playlists
@@ -137,10 +137,110 @@ export const getMyPlaylists = async (req, res) => {
         // const userId = mongoose.Types.ObjectId(req.user._id);
         const myPlaylists = await Playlist.find({
             enrolled: userid
-        });
+        }).populate('videos');
+
+
         res.status(200).json({
             message: 'User playlists retrieved successfully',
             myPlaylists,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error retrieving user playlists',
+        });
+    }
+}
+
+export const removeEnrollment = async (req, res) => {
+
+    try {
+        const { playlistid } = req.params
+        // const userId = mongoose.Types.ObjectId(req.user._id);
+        let updatedPlaylist = await Playlist.findByIdAndUpdate(playlistid, {
+            $pull: {
+                enrolled: req.user._id
+            }
+        },
+            {
+                new: true
+            }
+        ).populate('videos')
+        updatedPlaylist.totalEnrolled = updatedPlaylist.enrolled.length
+        updatedPlaylist.save()
+
+        updatedPlaylist = await Playlist.findById(playlistid).populate('videos')
+
+        const allPlaylists = await Playlist.find().populate('videos')
+        const myPlaylists = await Playlist.find({
+            enrolled: req.user._id
+        }).populate('videos');
+
+
+        res.status(200).json({
+            message: 'Success removing enrollment',
+            updatedPlaylist,
+            allPlaylists,
+            myPlaylists
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error retrieving user playlists',
+        });
+    }
+}
+export const enrollPlaylist = async (req, res) => {
+
+    try {
+        const { playlistid } = req.params
+        // const userId = mongoose.Types.ObjectId(req.user._id);
+        let updatedPlaylist = await Playlist.findByIdAndUpdate(playlistid, {
+            $push: {
+                enrolled: req.user._id
+            }
+        },
+            {
+                new: true
+            }
+        ).populate('videos')
+        updatedPlaylist.totalEnrolled = updatedPlaylist.enrolled.length
+        updatedPlaylist.save()
+
+        updatedPlaylist = await Playlist.findById(playlistid).populate('videos')
+        const allPlaylists = await Playlist.find().populate('videos')
+
+        const myPlaylists = await Playlist.find({
+            enrolled: req.user._id
+        }).populate('videos');
+
+
+        res.status(200).json({
+            message: 'Success removing enrollment',
+            updatedPlaylist,
+            allPlaylists,
+            myPlaylists
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error retrieving user playlists',
+        });
+    }
+}
+export const searchPlaylist = async (req, res) => {
+
+    try {
+        const { keyword } = req.params // Extract the search query from the request query parameters
+
+        // Use a MongoDB query to search for playlists by name
+        const searchResult = await Playlist.find({ name: { $regex: keyword, $options: 'i' } }).populate('videos');
+
+
+
+        res.status(200).json({
+            message: 'Success removing enrollment',
+            searchResult
         });
     } catch (error) {
         console.error(error);
