@@ -8,6 +8,8 @@ import fileUpload from 'express-fileupload';
 
 
 import userRouter from './routes/userRouter.js'
+import playlistRouter from './routes/playlistRouter.js'
+import videoRouter from './routes/videoRoute.js'
 
 const server = express();
 connectDB()
@@ -21,6 +23,15 @@ server.use(express.json(
         extended: true,
     }
 ))
+server.use(
+    cors({
+        origin: process.env.FRONTEND_URL,
+        exposedHeaders: ['X-Total-Count'],
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+        credentials: true,
+    })
+);
+
 server.use(bodyParser.urlencoded({
     extended: true,
     limit: '50mb',
@@ -35,14 +46,7 @@ server.use(fileUpload({
     }
 }))
 
-server.use(
-    cors({
-        origin: process.env.FRONTEND_URL,
-        exposedHeaders: ['X-Total-Count'],
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-        credentials: true,
-    })
-);
+
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -57,6 +61,8 @@ cloudinary.config({
 
 
 server.use('/api/user', userRouter);
+server.use('/api/playlist', playlistRouter);
+server.use('/api/video', videoRouter);
 
 
 

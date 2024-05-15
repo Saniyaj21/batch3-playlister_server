@@ -18,15 +18,21 @@ const playlistSchema = new mongoose.Schema({
         ref: 'User'
     },
 
-    isPublic: {
-        type: Boolean,
-        default: false
-    },
+    // isPublic: {
+    //     type: Boolean,
+    //     default: false
+    // },
 
     videos: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Video'
+        }
+    ],
+    enrolled: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         }
     ],
 },

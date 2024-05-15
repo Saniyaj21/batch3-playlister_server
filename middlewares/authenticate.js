@@ -13,7 +13,6 @@ export const isAuthenticate = async (req, res, next) => {
             })
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        console.log(decoded);
         let user = await User.findById(decoded._id)
         if (!user.token) {
             res.status(400).json({
